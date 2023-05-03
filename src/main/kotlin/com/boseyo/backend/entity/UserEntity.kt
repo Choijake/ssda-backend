@@ -10,8 +10,8 @@ import java.util.*
 class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
     @Column(name = "user_id")
+    val user_id: Long? = null,
     var email: String?= null,
     var password: String? = null,
     var username: String? = null,

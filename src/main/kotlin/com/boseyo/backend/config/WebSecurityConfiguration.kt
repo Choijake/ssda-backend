@@ -57,10 +57,6 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/signup", "/api/authenticate").permitAll()
-                .requestMatchers("/api/user/**")
-                .hasAnyRole("MANAGER", "ADMIN")
-                .requestMatchers("/api/admin/**")
-                .hasRole("ADMIN")
                 .anyRequest().authenticated()
 
                 .and()

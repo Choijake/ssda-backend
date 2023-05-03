@@ -22,7 +22,7 @@ class UserService(
             throw DuplicateMemberException("이미 가입되어 있는 유저입니다.")
         }
 
-        val authority = Authority("ADMIN")
+        val authority = Authority("ROLE_USER")
 
         val user = UserEntity(
                 username = userDto.username,
@@ -31,7 +31,6 @@ class UserService(
                 authorities = setOf(authority),
                 enabled = true
         )
-
         return UserDto.from(userRepository.save(user))
     }
 
