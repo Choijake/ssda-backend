@@ -7,21 +7,26 @@ import java.util.*
 
 
 @Entity
-@Data
-data class UserEntity(
+class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    var email: String,
-    var password: String,
-    var username: String,
-    var roles: String,
-    var created: LocalDateTime,
-    var updated: LocalDateTime,
-    var deleted: LocalDateTime? = null,
-    var enabled: Boolean
-) {
-    fun getRoleList(): MutableList<Array<String>> {
-        return if (roles.isNotEmpty()) mutableListOf(roles.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) else ArrayList()
-    }
-}
+    @Column(name = "user_id")
+    var email: String?= null,
+    var password: String? = null,
+    var username: String? = null,
+    var roles: String? = null,
+    var enabled: Boolean = false,
+//    var created: LocalDateTime,
+//    var updated: LocalDateTime,
+//    var deleted: LocalDateTime? = null,
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_authority",
+            joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "user_id")],
+            inverseJoinColumns = [JoinColumn(name = "authority_name", referencedColumnName = "authority_name")]
+    )
+    val authorities: Set<Authority>? = null
+)

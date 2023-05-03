@@ -1,10 +1,13 @@
 package com.boseyo.backend.dto
 
 import lombok.Data
+import org.jetbrains.annotations.NotNull
 
 
 @Data
 class LoginRequestDto {
-    val username: String? = null
-    val password: String? = null
+    @field:NotNull
+    var username: String? = null
+    @field:NotNull
+    var password: String? = null
 }
