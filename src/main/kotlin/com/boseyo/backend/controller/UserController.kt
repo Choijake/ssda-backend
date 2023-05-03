@@ -41,12 +41,6 @@ class UserController(
     }
 }
 
-data class JoinRequestDto(
-    var username: String,
-    var password: String,
-    var email: String
-)
-
 //import com.boseyo.backend.config.auth.PrincipalDetails
 //import com.boseyo.backend.config.auth.PrincipalDetailsService
 //import com.boseyo.backend.entity.UserEntity

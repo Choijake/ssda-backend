@@ -15,7 +15,6 @@ class UserEntity(
     var email: String?= null,
     var password: String? = null,
     var username: String? = null,
-    var roles: String? = null,
     var enabled: Boolean = false,
 //    var created: LocalDateTime,
 //    var updated: LocalDateTime,
