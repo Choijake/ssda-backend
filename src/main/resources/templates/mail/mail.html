@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div style="margin:120px">
+    <div style="margin-bottom: 10px">
+        <h1>인증 코드 메일입니다.</h1>
+        <br/>
+        <h3 style="text-align: center;"> 아래 버튼을 클릭 해주세요.</h3>
+    </div>
+    <div style="text-align: center;">
+        <button style="color: crimson;">
+            <a th:href="@{'https://ssda.dawoony.com/confirm-email?email='+ ${email}+'&token='+${token}}">클릭해주세요</a>
+        </button>
+    </div>
+    <br/>
+</div>
+</body>
+</html>

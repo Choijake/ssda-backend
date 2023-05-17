@@ -56,7 +56,7 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
 
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/signup", "/api/authenticate").permitAll()
+                .requestMatchers("/api/signup", "/api/authenticate", "/api/confirm-email").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
