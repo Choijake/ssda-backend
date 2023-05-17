@@ -1,4 +1,4 @@
-package com.boseyo.backend.controller
+package com.boseyo.backend.jwt
 
 import com.boseyo.backend.dto.ConfirmEmailDto
 import com.boseyo.backend.dto.LoginRequestDto
@@ -10,6 +10,7 @@ import com.boseyo.backend.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -33,6 +34,18 @@ class AuthController(
         val jwt: String = tokenProvider.createToken(authentication)
         val httpHeaders = HttpHeaders()
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer $jwt")
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        val cookie = ResponseCookie.from("accessToken", jwt)
+            .maxAge((7 * 24 * 60 * 60).toLong())
+            .path("/")
+            .secure(true)
+            .sameSite("None")
+            .httpOnly(true)
+            .build()
+        httpHeaders.add(HttpHeaders.SET_COOKIE, cookie.toString())
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         return ResponseEntity<TokenDto>(TokenDto(jwt), httpHeaders, HttpStatus.OK)
     }
 
