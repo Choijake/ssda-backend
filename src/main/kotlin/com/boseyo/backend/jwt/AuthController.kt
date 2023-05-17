@@ -34,18 +34,14 @@ class AuthController(
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer $jwt")
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        val refreshToken: String = tokenProvider.createToken(authentication)
-        // ResponseCookie 생성
-        val cookie = ResponseCookie.from("refreshToken", refreshToken)
+        val cookie = ResponseCookie.from("accessToken", jwt)
             .maxAge((7 * 24 * 60 * 60).toLong())
             .path("/")
             .secure(true)
             .sameSite("None")
             .httpOnly(true)
             .build()
-        // 쿠키를 응답 헤더에 추가
-        val headers = HttpHeaders()
-        headers.add(HttpHeaders.SET_COOKIE, cookie.toString())
+        httpHeaders.add(HttpHeaders.SET_COOKIE, cookie.toString())
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         return ResponseEntity<TokenDto>(TokenDto(jwt), httpHeaders, HttpStatus.OK)
