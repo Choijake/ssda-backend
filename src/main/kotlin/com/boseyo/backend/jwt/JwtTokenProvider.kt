@@ -18,58 +18,72 @@ import java.util.*
 import java.util.stream.Collectors
 
 @Component
-class JwtTokenProvider (
+class JwtTokenProvider(
     @param:Value("\${jwt.secret}") private val secret: String,
-    @Value("\${jwt.token-validity-in-seconds}") tokenValidityInSeconds: Long
-    ) : InitializingBean {
-        private val logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
-        private val tokenValidityInMilliseconds: Long
-        private var key: Key? = null
+    @Value("\${jwt.token-validity-in-seconds}") tokenValidityInSeconds: Long,
+    @Value("\${jwt.refresh-token-validity-in-seconds}") refreshTokenValidityInSeconds: Long
+) : InitializingBean {
+    private val logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
+    private val tokenValidityInMilliseconds: Long
+    private val refreshTokenValidityInMilliseconds: Long // 추가: refresh token의 유효기간
 
-        init {
-            tokenValidityInMilliseconds = tokenValidityInSeconds * 1000
-        }
+    private var key: Key? = null
 
-        companion object {
-            private const val AUTHORITIES_KEY = "auth"
-        }
+    init {
+        tokenValidityInMilliseconds = tokenValidityInSeconds * 1000
+        refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000 // 추가: refresh token의 유효기간을 밀리초로 계산
+    }
 
-        override fun afterPropertiesSet() {
-            key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret))
-        }
+    companion object {
+        private const val AUTHORITIES_KEY = "auth"
+    }
 
-        fun createToken(authentication: Authentication): String {
-            val authorities = authentication.authorities.stream()
-                    .map { obj: GrantedAuthority -> obj.authority }
-                    .collect(Collectors.joining(","))
+    override fun afterPropertiesSet() {
+        key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret))
+    }
 
-            val validity = Date(Date().time + tokenValidityInMilliseconds)
+    fun createAccessToken(authentication: Authentication): String {
+        val authorities = authentication.authorities.stream()
+            .map { obj: GrantedAuthority -> obj.authority }
+            .collect(Collectors.joining(","))
 
-            return Jwts.builder()
-                    .setSubject(authentication.name)
-                    .claim(AUTHORITIES_KEY, authorities)
-                    .signWith(key, SignatureAlgorithm.HS512)
-                    .setExpiration(validity)
-                    .compact()
-        }
+        val validity = Date(Date().time + tokenValidityInMilliseconds)
 
-        fun getAuthentication(token: String?): Authentication {
-            val claims = Jwts
-                    .parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .body
+        return Jwts.builder()
+            .setSubject(authentication.name)
+            .claim(AUTHORITIES_KEY, authorities)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .setExpiration(validity)
+            .compact()
+    }
 
-            val authorities: Collection<GrantedAuthority> = Arrays
-                    .stream(claims[AUTHORITIES_KEY].toString().split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-                    .map { role: String? -> SimpleGrantedAuthority(role) }
-                    .collect(Collectors.toList())
+    fun createRefreshToken(): String {
+        val now = Date()
+        val validity = Date(now.time + refreshTokenValidityInMilliseconds)
+        return Jwts.builder()
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
+    }
 
-            val principal = User(claims.subject, "", authorities)
+    fun getAuthentication(token: String?): Authentication {
+        val claims = Jwts
+            .parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .body
 
-            return UsernamePasswordAuthenticationToken(principal, token, authorities)
-        }
+        val authorities: Collection<GrantedAuthority> = Arrays
+            .stream(claims[AUTHORITIES_KEY].toString().split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            .map { role: String? -> SimpleGrantedAuthority(role) }
+            .collect(Collectors.toList())
+
+        val principal = User(claims.subject, "", authorities)
+
+        return UsernamePasswordAuthenticationToken(principal, token, authorities)
+    }
 
         fun validateToken(token: String?): Boolean {
             try {

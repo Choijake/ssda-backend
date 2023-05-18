@@ -3,8 +3,6 @@ package com.boseyo.backend.jwt
 import com.boseyo.backend.dto.ConfirmEmailDto
 import com.boseyo.backend.dto.LoginRequestDto
 import com.boseyo.backend.dto.TokenDto
-import com.boseyo.backend.jwt.JwtFilter
-import com.boseyo.backend.jwt.JwtTokenProvider
 import com.boseyo.backend.service.EmailService
 import com.boseyo.backend.service.UserService
 import jakarta.validation.Valid
@@ -21,32 +19,35 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 class AuthController(
-        private val tokenProvider: JwtTokenProvider,
-        private val authenticationManagerBuilder: AuthenticationManagerBuilder,
-        private val emailService: EmailService,
-        private val userService: UserService
+    private val tokenProvider: JwtTokenProvider,
+    private val authenticationManagerBuilder: AuthenticationManagerBuilder,
+    private val emailService: EmailService,
+    private val userService: UserService
 ) {
     @PostMapping("/authenticate")
     fun authorize(@RequestBody @Valid loginDto: LoginRequestDto): ResponseEntity<TokenDto> {
         val authenticationToken = UsernamePasswordAuthenticationToken(loginDto.username, loginDto.password)
         val authentication: Authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
-        SecurityContextHolder.getContext().setAuthentication(authentication)
-        val jwt: String = tokenProvider.createToken(authentication)
+        SecurityContextHolder.getContext().authentication = authentication
+        val refreshToken: String = tokenProvider.createRefreshToken()
+        val accessToken: String = tokenProvider.createAccessToken(authentication)
         val httpHeaders = HttpHeaders()
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer $jwt")
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        val cookie = ResponseCookie.from("accessToken", jwt)
+        // accessToken을 "Authorization" 헤더에 추가
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+
+        // refreshToken을 쿠키로 전달
+        val cookie = ResponseCookie.from("refreshToken", refreshToken)
             .maxAge((7 * 24 * 60 * 60).toLong())
             .path("/")
+            .domain("ssda.dawoony.com")
             .secure(true)
             .sameSite("None")
             .httpOnly(true)
             .build()
         httpHeaders.add(HttpHeaders.SET_COOKIE, cookie.toString())
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        return ResponseEntity<TokenDto>(TokenDto(jwt), httpHeaders, HttpStatus.OK)
+        return ResponseEntity<TokenDto>(TokenDto(accessToken), httpHeaders, HttpStatus.OK)
     }
 
     @PostMapping("/confirm-email")
