@@ -1,18 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div style="margin:120px">
-    <div style="margin-bottom: 10px">
-        <h1>인증 코드 메일입니다.</h1>
-        <br/>
-        <h3 style="text-align: center;"> 아래 버튼을 클릭 해주세요.</h3>
-    </div>
-    <div style="text-align: center;">
-        <button style="color: crimson;">
-            <a th:href="@{'https://ssda.dawoony.com/confirm-email?email='+ ${email}+'&token='+${token}}">클릭해주세요</a>
-        </button>
-    </div>
-    <br/>
+<div class="container">
+    <h1>쓰다 서비스 이메일 인증</h1>
+    <p>안녕하세요! "쓰다" 서비스에 가입해 주셔서 감사합니다.</p>
+    <p>아래 버튼을 클릭하여 이메일 주소를 인증해주세요.</p>
+    <a th:href="@{'https://ssda.dawoony.com/confirm-email?email='+ ${email}+'&token='+${token}}" class="button">이메일 인증</a>
 </div>
 </body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333333;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: #555555;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .button {
+        display: inline-block;
+        background-color: #4CAF50;
+        color: #ffffff;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+</style>
 </html>

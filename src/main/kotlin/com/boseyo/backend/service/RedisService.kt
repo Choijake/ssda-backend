@@ -19,9 +19,9 @@ class RedisService(@Autowired private val template: RedisTemplate<String, String
         return template!!.hasKey(key)
     }
 
-    fun setDataExpire(key: String?, value: String?, duration: Long) {
+    fun setDataExpire(key: String?, value: String?, duration: Duration) {
         val valueOperations = template!!.opsForValue()
-        val expireDuration: Duration = Duration.ofSeconds(duration)
+        val expireDuration: Duration = Duration.ofSeconds(duration.toSeconds())
         if (key != null && value != null) {
             valueOperations.set(key, value, expireDuration)
         }
