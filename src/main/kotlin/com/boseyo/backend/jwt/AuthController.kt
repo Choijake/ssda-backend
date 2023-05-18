@@ -37,6 +37,7 @@ class AuthController(
         val cookie = ResponseCookie.from("accessToken", jwt)
             .maxAge((7 * 24 * 60 * 60).toLong())
             .path("/")
+            .domain("ssda.dawoony.com")
             .secure(true)
             .sameSite("None")
             .httpOnly(true)
