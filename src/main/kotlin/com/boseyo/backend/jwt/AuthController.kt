@@ -17,24 +17,26 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-
 @RestController
 @RequestMapping("/api")
 class AuthController(
-        private val tokenProvider: JwtTokenProvider,
-        private val authenticationManagerBuilder: AuthenticationManagerBuilder
+    private val tokenProvider: JwtTokenProvider,
+    private val authenticationManagerBuilder: AuthenticationManagerBuilder
 ) {
     @PostMapping("/authenticate")
     fun authorize(@RequestBody @Valid loginDto: LoginRequestDto): ResponseEntity<TokenDto> {
         val authenticationToken = UsernamePasswordAuthenticationToken(loginDto.username, loginDto.password)
         val authentication: Authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
         SecurityContextHolder.getContext().setAuthentication(authentication)
-        val jwt: String = tokenProvider.createToken(authentication)
+        val refreshToken: String = tokenProvider.createRefreshToken()
+        val accessToken: String = tokenProvider.createAccessToken(authentication)
         val httpHeaders = HttpHeaders()
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer $jwt")
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        val cookie = ResponseCookie.from("accessToken", jwt)
+        // accessToken을 "Authorization" 헤더에 추가
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+
+        // refreshToken을 쿠키로 전달
+        val cookie = ResponseCookie.from("refreshToken", refreshToken)
             .maxAge((7 * 24 * 60 * 60).toLong())
             .path("/")
             .domain("ssda.dawoony.com")
@@ -43,8 +45,7 @@ class AuthController(
             .httpOnly(true)
             .build()
         httpHeaders.add(HttpHeaders.SET_COOKIE, cookie.toString())
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        return ResponseEntity<TokenDto>(TokenDto(jwt), httpHeaders, HttpStatus.OK)
+        return ResponseEntity<TokenDto>(TokenDto(accessToken), httpHeaders, HttpStatus.OK)
     }
 }
