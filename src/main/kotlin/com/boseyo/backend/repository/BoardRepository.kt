@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-abstract class BoardRepository : JpaRepository<BoardEntity,Int>{
+interface BoardRepository : JpaRepository<BoardEntity,Int>{
 }

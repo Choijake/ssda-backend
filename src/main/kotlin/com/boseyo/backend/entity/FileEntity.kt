@@ -8,7 +8,7 @@ import lombok.Getter
 data class FileEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long? = null,
 
     @Column(nullable = false)
     var ogFilename:String,
@@ -19,7 +19,7 @@ data class FileEntity (
     @Column(nullable=false)
     var filePath:String,
 ){
-    fun getId(): Long {
+    fun getId(): Long? {
         return id
     }
 }

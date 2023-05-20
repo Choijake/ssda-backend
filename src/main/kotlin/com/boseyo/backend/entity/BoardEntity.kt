@@ -22,11 +22,3 @@ data class BoardEntity (
     @Column(updatable = false, nullable = false)
     val fontCreatedDate: LocalDateTime = LocalDateTime.now()
 )
-
-/*
-폰트이름
-제작자
-폰트 이미지?예시
-타이핑 할 수 있는거
-좋아요?
- */
