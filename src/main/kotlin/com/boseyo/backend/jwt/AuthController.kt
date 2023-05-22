@@ -29,6 +29,7 @@ class AuthController(
         val authenticationToken = UsernamePasswordAuthenticationToken(loginDto.username, loginDto.password)
         val authentication: Authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
         SecurityContextHolder.getContext().authentication = authentication
+        val userRole: String = authentication.authorities.toString().replace("[", "").replace("]", "")
         val refreshToken: String = tokenProvider.createRefreshToken()
         val accessToken: String = tokenProvider.createAccessToken(authentication)
         val httpHeaders = HttpHeaders()
@@ -47,7 +48,7 @@ class AuthController(
             .build()
         httpHeaders.add(HttpHeaders.SET_COOKIE, cookie.toString())
 
-        return ResponseEntity<TokenDto>(TokenDto(accessToken), httpHeaders, HttpStatus.OK)
+        return ResponseEntity<TokenDto>(TokenDto(accessToken, loginDto.username, userRole), httpHeaders, HttpStatus.OK)
     }
 
     @PostMapping("/confirm-email")
