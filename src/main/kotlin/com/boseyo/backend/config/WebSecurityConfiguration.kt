@@ -44,6 +44,7 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
     fun configure(http: HttpSecurity): SecurityFilterChain {
         http
                 .csrf().disable()
+                .cors().and()
 
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
