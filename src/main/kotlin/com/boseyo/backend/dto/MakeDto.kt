@@ -1,6 +1,6 @@
 package com.boseyo.backend.dto
 
-class MakeDto {
-    val imageBase64: String? = null
+class MakeDto (
+    val imageBase64: ByteArray? = null,
     val fontName: String? = null
-}
+)
