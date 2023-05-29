@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class MakeController(private val makeService: MakeService) {
     @PostMapping("/draw")
     @PreAuthorize("hasAnyRole('USER')")
-    fun draw(@RequestBody makeDto: MakeDto): ResponseEntity<String> {
+    fun draw(@RequestBody makeDto: MakeDto): ResponseEntity<MakeDto> {
         return ResponseEntity.ok(makeService.draw(makeDto))
     }
 }
