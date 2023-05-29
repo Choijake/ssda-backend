@@ -1,6 +1,7 @@
 package com.boseyo.backend.controller
 
 import com.boseyo.backend.dto.MakeDto
+import com.boseyo.backend.entity.MakeDrawEntity
 import com.boseyo.backend.service.MakeService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 class MakeController(private val makeService: MakeService) {
     @PostMapping("/draw")
     @PreAuthorize("hasAnyRole('USER')")
-    fun draw(@RequestBody makeDto: MakeDto): ResponseEntity<String> {
+    fun draw(@RequestBody makeDto: MakeDto): ResponseEntity<MakeDto> {
         return ResponseEntity.ok(makeService.draw(makeDto))
     }
 }

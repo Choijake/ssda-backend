@@ -13,7 +13,7 @@ class MakeService(
     private val makeRepository: MakeRepository,
     private val userRepository: UserRepository
 ) {
-    fun draw(makeDto: MakeDto): String{
+    fun draw(makeDto: MakeDto): MakeDto{
         val drawer = SecurityContextHolder.getContext().authentication.principal as UserDetails
         println(drawer.username)
         val makeDrawEntity = MakeDrawEntity(
@@ -23,6 +23,9 @@ class MakeService(
         )
         makeRepository.save(makeDrawEntity)
         // TODO: ML 서버로 imageBase64 전송
-        return makeDrawEntity.imageBase64!!
+        return MakeDto(
+            imageBase64 = makeDto.imageBase64,
+            fontName = makeDto.fontName
+        )
     }
 }
