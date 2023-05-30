@@ -1,6 +1,8 @@
 package com.boseyo.backend.dto
 
+import org.springframework.web.multipart.MultipartFile
+
 class MakeDto (
-    val imageBase64: ByteArray? = null,
+    val image64: MultipartFile? = null,
     val fontName: String? = null
 )

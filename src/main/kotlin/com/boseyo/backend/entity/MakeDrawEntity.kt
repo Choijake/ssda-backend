@@ -1,6 +1,7 @@
 package com.boseyo.backend.entity
 
 import jakarta.persistence.*
+import org.springframework.web.multipart.MultipartFile
 
 @Entity
 class MakeDrawEntity (
@@ -9,8 +10,8 @@ class MakeDrawEntity (
     var id: Long? = null,
 
     @Lob
-    @Column(name = "image_base64", nullable = false, columnDefinition = "BLOB")
-    val imageBase64: ByteArray? = null,
+    @Column(name = "image64", nullable = false, columnDefinition = "BLOB")
+    val image64: MultipartFile? = null,
     val fontName: String? = null,
 
     @ManyToOne
