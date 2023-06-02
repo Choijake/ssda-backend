@@ -33,7 +33,6 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
                 configuration.addAllowedOriginPattern("*")
                 configuration.addAllowedHeader("*")
                 configuration.addAllowedMethod("*")
-        //        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
                 val source = UrlBasedCorsConfigurationSource()
                 source.registerCorsConfiguration("/**", configuration)
                 return source
