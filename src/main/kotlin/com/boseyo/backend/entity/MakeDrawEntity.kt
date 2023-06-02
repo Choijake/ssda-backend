@@ -1,7 +1,6 @@
 package com.boseyo.backend.entity
 
 import jakarta.persistence.*
-import java.sql.Blob
 
 @Entity
 class MakeDrawEntity (
@@ -9,10 +8,10 @@ class MakeDrawEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    @Lob
-    @Column(name = "image64", nullable = false, columnDefinition = "BLOB")
-    val image64: Blob? = null,
+    @Column(name = "image64", nullable = false, columnDefinition = "TEXT")
+    val image64: String? = null,
     val fontName: String? = null,
+    val contentType: String? = null,
 
     @ManyToOne
     val user: UserEntity? = null
