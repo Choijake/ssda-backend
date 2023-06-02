@@ -18,7 +18,8 @@ class MakeService(
         val makeDrawEntity = MakeDrawEntity(
             user = userRepository.findOneWithAuthoritiesByUsername(drawer.username).orElse(null)!!,
             fontName = makeDto.fontName,
-            image64 = makeDto.imageBase64
+            image64 = makeDto.imageBase64,
+            contentType = makeDto.contentType
         )
         makeRepository.save(makeDrawEntity)
         // TODO: ML 서버로 image64 전송
