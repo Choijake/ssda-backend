@@ -43,23 +43,22 @@ class AuthController(
             .path("/")
             .domain("ssda.dawoony.com")
             .secure(true)
-            .sameSite("None")
+            .sameSite("Lax")
             .httpOnly(true)
             .build()
         httpHeaders.add(HttpHeaders.SET_COOKIE, cookie.toString())
 
-        return ResponseEntity<TokenDto>(TokenDto(accessToken, loginDto.username, userRole), httpHeaders, HttpStatus.OK)
+        return ResponseEntity<TokenDto>(TokenDto(username = loginDto.username, role = userRole, accessToken = accessToken), httpHeaders, HttpStatus.OK)
     }
 
     @PostMapping("/confirm-email")
     fun confirmEmail(@RequestBody confirmEmailDto: ConfirmEmailDto): ResponseEntity<String> {
         val confirmResult = emailService.confirmEmail(confirmEmailDto.email!!, confirmEmailDto.token!!)
-        when (confirmResult.result)
-        {
-            false -> return ResponseEntity<String>(confirmResult.message, HttpStatus.BAD_REQUEST)
+        return when (confirmResult.result) {
+            false -> ResponseEntity<String>(confirmResult.message, HttpStatus.BAD_REQUEST)
             true -> {
                 userService.emailConfirm(confirmEmailDto.email!!)
-                return ResponseEntity<String>(confirmResult.message, HttpStatus.OK)
+                ResponseEntity<String>(confirmResult.message, HttpStatus.OK)
             }
         }
     }
