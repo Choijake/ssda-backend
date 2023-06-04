@@ -7,8 +7,6 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.crypto.factory.PasswordEncoderFactories
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.io.IOException
 
@@ -38,5 +36,14 @@ class UserController(
     @PreAuthorize("hasAnyRole('ADMIN')")
     fun getUserInfo(@PathVariable username: String): ResponseEntity<UserDto> {
         return ResponseEntity.ok(userService.getUserWithAuthorities(username))
+    }
+
+    @GetMapping("/signup/check")
+    fun checkEmail(@RequestParam type: String, @RequestParam value: String): ResponseEntity<Boolean> {
+        return when (type) {
+            "email" -> ResponseEntity.ok(userService.checkEmail(value))
+            "username" -> ResponseEntity.ok(userService.checkUsername(value))
+            else -> ResponseEntity.badRequest().build()
+        }
     }
 }
