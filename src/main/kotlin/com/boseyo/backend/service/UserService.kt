@@ -10,7 +10,6 @@ import com.boseyo.backend.util.SecurityUtil
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class UserService(
@@ -47,9 +46,8 @@ class UserService(
 
     @Transactional
     fun emailConfirm(email: String) {
-        val user = userRepository.findByEmail(email)
+        val user = userRepository.findByEmail(email) ?: throw NotFoundMemberException("Member not found")
         user.enabled = true
-        println(user)
         userRepository.save(user)
     }
 
@@ -74,4 +72,14 @@ class UserService(
                             throw NotFoundMemberException("Member not found")
                         }
         )
+
+    @Transactional(readOnly = true)
+    fun checkEmail(email: String): Boolean {
+        return userRepository.findByEmail(email) != null
+    }
+
+    @Transactional(readOnly = true)
+    fun checkUsername(username: String): Boolean {
+        return userRepository.findByUsername(username) != null
+    }
 }

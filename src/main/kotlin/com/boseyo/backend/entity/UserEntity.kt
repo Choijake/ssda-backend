@@ -1,9 +1,6 @@
 package com.boseyo.backend.entity
 
 import jakarta.persistence.*
-import lombok.Data
-import java.time.LocalDateTime
-import java.util.*
 
 
 @Entity
@@ -12,14 +9,11 @@ class UserEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     val user_id: Long? = null,
+    @Column(unique = true)
     var email: String?= null,
     var password: String? = null,
     var username: String? = null,
     var enabled: Boolean = false,
-//    var created: LocalDateTime,
-//    var updated: LocalDateTime,
-//    var deleted: LocalDateTime? = null,
-
 
     @ManyToMany
     @JoinTable(
