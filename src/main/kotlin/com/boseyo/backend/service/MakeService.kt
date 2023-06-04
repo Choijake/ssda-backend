@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.util.UriComponentsBuilder
 
 
 @Service
@@ -21,7 +22,6 @@ class MakeService(
     private val userRepository: UserRepository
 ) {
     fun draw(makeDto: MakeDto): String {
-        val objectMapper = ObjectMapper()
         val drawer = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val makeDrawEntity = MakeDrawEntity(
             user = userRepository.findOneWithAuthoritiesByUsername(drawer.username).orElse(null)!!,
@@ -30,19 +30,32 @@ class MakeService(
             contentType = makeDto.contentType
         )
         makeRepository.save(makeDrawEntity)
-        val uri = "http://117.16.94.218:8000/font_generation_with_total_image/test"
+
+        return requestToMl(makeDto, drawer.username)
+    }
+
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    fun requestToMl(makeDto: MakeDto, username: String): String {
+        val reqUri = UriComponentsBuilder.newInstance()
+            .scheme("http")
+            .host("117.16.94.218")
+            .port(8000)
+            .path("/font_generation_with_total_image")
+            .pathSegment(username, makeDto.fontName)
+            .build()
+            .toUriString()
         val restTemplate = RestTemplate()
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
-
-        val response: ResponseEntity<String> = restTemplate.postForObject<String>(
-            uri, HttpEntity(makeDto.imageBase64?.let { MLRequest(it) },headers),
-            String::class.java
-        ) as ResponseEntity<String>
-        println(response?.statusCode)
-        return drawer.toString()
+        return try {
+            val response: ResponseEntity<String> = restTemplate.postForObject<String>(
+                reqUri, HttpEntity(makeDto.imageBase64?.let { MLRequest(it) }, headers),
+                String::class.java
+            ) as ResponseEntity<String>
+            response.body.toString()
+        } catch (e: Exception) {
+            return e.toString()
+        }
     }
 }
-data class MLRequest(
-    val imagebase64: String
-)
+data class MLRequest(val imagebase64: String)
