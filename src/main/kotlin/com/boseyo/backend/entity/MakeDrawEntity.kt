@@ -1,18 +1,17 @@
 package com.boseyo.backend.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 
 @Entity
 class MakeDrawEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    val imageBase64: String? = null,
+
+    @Column(name = "image64", nullable = false, columnDefinition = "TEXT")
+    val image64: String? = null,
     val fontName: String? = null,
+    val contentType: String? = null,
 
     @ManyToOne
     val user: UserEntity? = null
