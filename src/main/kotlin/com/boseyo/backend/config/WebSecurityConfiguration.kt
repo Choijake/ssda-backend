@@ -2,7 +2,6 @@ package com.boseyo.backend.config
 
 import com.boseyo.backend.jwt.JwtSecurityConfig
 import com.boseyo.backend.jwt.JwtTokenProvider
-import org.apache.catalina.filters.CorsFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -35,7 +33,6 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
                 configuration.addAllowedOriginPattern("*")
                 configuration.addAllowedHeader("*")
                 configuration.addAllowedMethod("*")
-        //        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
                 val source = UrlBasedCorsConfigurationSource()
                 source.registerCorsConfiguration("/**", configuration)
                 return source
@@ -44,6 +41,7 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
     fun configure(http: HttpSecurity): SecurityFilterChain {
         http
                 .csrf().disable()
+                .cors().and()
 
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -56,7 +54,7 @@ class SecurityConfig(private val tokenProvider: JwtTokenProvider, private val jw
 
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/signup", "/api/authenticate").permitAll()
+                .requestMatchers("/api/signup", "/api/authenticate", "/api/confirm-email", "/api/signup/check").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
