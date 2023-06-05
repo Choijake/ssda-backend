@@ -37,7 +37,7 @@ class BoardController (@Autowired private val boardService: BoardService){
     }
 
     //게시글 삭제
-    @DeleteMapping("/delete")
+    @DeleteMapping("/{postId}")
     @ResponseBody
     fun deletePost(@PathVariable postId:Long):Boolean{
         return Result.runCatching { boardService.deletePost(postId) }.isSuccess

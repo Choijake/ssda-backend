@@ -20,10 +20,9 @@ class BoardService (val boardRepository: BoardRepository){
 
         for(board in boardList){
             var boardDto:BoardDto = BoardDto(
-                board.id,
+                board.title,
                 board.fontName,
                 board.fontGenerator,
-                board.fileId,
                 board.fontCreatedDate)
             boardDtoList.add(boardDto)
         }
@@ -35,10 +34,9 @@ class BoardService (val boardRepository: BoardRepository){
         val board: BoardEntity = boardRepository.findById(id.toInt()).get()
 
         val boardDto: BoardDto = BoardDto(
-            board.id,
+            board.title,
             board.fontName,
             board.fontGenerator,
-            board.fileId,
             board.fontCreatedDate
         )
         return boardDto
