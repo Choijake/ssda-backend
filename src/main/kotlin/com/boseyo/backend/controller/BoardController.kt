@@ -1,6 +1,7 @@
 package com.boseyo.backend.controller
 
 import com.boseyo.backend.dto.BoardDto
+import com.boseyo.backend.dto.MakeDto
 import com.boseyo.backend.service.BoardService
 import jakarta.persistence.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,11 +12,11 @@ import org.springframework.web.bind.annotation.*
 class BoardController (@Autowired private val boardService: BoardService){
     //게시글 작성
     @PostMapping("/write")
-    fun writePost(@RequestBody boardDto: BoardDto):Long?{
-        return boardService.savePost(boardDto)
+    fun writePost(@RequestBody boardDto: BoardDto, makeDto: MakeDto):Long?{
+        return boardService.savePost(boardDto, makeDto)
     }
 
-    //게시판 작성 글 목록
+    //작성 글 목록
     @GetMapping
     fun getPostList():List<BoardDto>{
         return boardService.getBoardList()
