@@ -40,7 +40,7 @@ class MakeService(
             .scheme("http")
             .host("117.16.94.218")
             .port(8000)
-            .path("/font_generation_with_total_image")
+            .path("/font_generation/images")
             .pathSegment(username, makeDto.fontName)
             .build()
             .toUriString()
@@ -48,13 +48,13 @@ class MakeService(
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         return try {
-            val response: ResponseEntity<String> = restTemplate.postForObject<String>(
+            val response: ResponseEntity<String> = restTemplate.postForObject(
                 reqUri, HttpEntity(makeDto.imageBase64?.let { MLRequest(it) }, headers),
                 String::class.java
             ) as ResponseEntity<String>
             response.body.toString()
         } catch (e: Exception) {
-            return e.toString()
+            ObjectMapper().writeValueAsString(e.message)
         }
     }
 }
