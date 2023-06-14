@@ -22,7 +22,6 @@ class MakeController(private val makeService: MakeService) {
     @PreAuthorize("hasAnyRole('USER')")
     fun draw(@RequestBody @Valid makeDto: MakeDto): ResponseEntity<ResponseMake> {
         makeService.draw(makeDto)
-        println(makeDto)
         return ResponseEntity.ok(ResponseMake("data", "message"))
     }
 }
