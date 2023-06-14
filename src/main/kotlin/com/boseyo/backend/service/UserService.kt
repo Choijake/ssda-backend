@@ -10,7 +10,6 @@ import com.boseyo.backend.util.SecurityUtil
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class UserService(
@@ -33,8 +32,10 @@ class UserService(
                 authorities = setOf(authority),
                 enabled = false
         )
-        emailService.sendEmailForm(userDto.email!!)
-        return UserDto.from(userRepository.save(user))
+        if (emailService.sendEmailForm(userDto.email!!).statusCode != 202) {
+            throw Exception("이메일 전송에 실패하였습니다.")
+        }
+            return UserDto.from(userRepository.save(user))
     }
 
     @Transactional(readOnly = true)
