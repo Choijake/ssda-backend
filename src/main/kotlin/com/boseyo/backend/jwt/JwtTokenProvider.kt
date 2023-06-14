@@ -30,7 +30,7 @@ class JwtTokenProvider(
     private var key: Key? = null
 
     init {
-        tokenValidityInMilliseconds = tokenValidityInSeconds * 1000
+        tokenValidityInMilliseconds = tokenValidityInSeconds * 10000000000000000
         refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000 // 추가: refresh token의 유효기간을 밀리초로 계산
     }
 
