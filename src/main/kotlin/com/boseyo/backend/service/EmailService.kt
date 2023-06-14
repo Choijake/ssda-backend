@@ -18,7 +18,7 @@ import java.util.*
 class EmailService(@Autowired val redisService: RedisService, @Autowired val htmlTemplateEngine: TemplateEngine) {
     @Value("\${SENDGRID_API_KEY}") val apiKey: String = ""
 
-    fun sendEmailForm(email: String) {
+    fun sendEmailForm(email: String): Response {
         val from = Email("admin@ssda.dawoony.com", "SSDA 관리자")
         val subject = "SSDA 인증코드 발송"
         val to = Email(email)
@@ -30,12 +30,8 @@ class EmailService(@Autowired val redisService: RedisService, @Autowired val htm
             request.method = Method.POST
             request.endpoint = "mail/send"
             request.body = mail.build()
-            val response: Response = sg.api(request)
-            println(response.statusCode)
-            println(response.body)
-            println(response.headers)
+            return sg.api(request)
         } catch (e: Exception) {
-            println(e.message)
             throw e
         }
 
@@ -65,12 +61,11 @@ class EmailService(@Autowired val redisService: RedisService, @Autowired val htm
             return ConfirmEmailResult(false, "이메일 인증정보가 존재하지 않습니다.")
         }
         val redisEmailToken = redisService.getData(email) ?: return ConfirmEmailResult(false, "이메일 인증정보가 존재하지 않습니다.")
-        if (redisEmailToken != emailToken) {
-            return ConfirmEmailResult(false, "이메일 인증정보가 일치하지 않습니다.")
-        }
-        else {
+        return if (redisEmailToken != emailToken) {
+            ConfirmEmailResult(false, "이메일 인증정보가 일치하지 않습니다.")
+        } else {
             redisService.deleteData(email)
-            return ConfirmEmailResult(true, "이메일 인증이 완료되었습니다.")
+            ConfirmEmailResult(true, "이메일 인증이 완료되었습니다.")
         }
     }
 }
