@@ -82,4 +82,5 @@ class UserService(
     fun checkUsername(username: String): Boolean {
         return userRepository.findByUsername(username) != null
     }
+
 }

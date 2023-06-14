@@ -5,6 +5,7 @@ import com.boseyo.backend.entity.MakeDrawEntity
 import com.boseyo.backend.repository.MakeRepository
 import com.boseyo.backend.repository.UserRepository
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -57,5 +58,7 @@ class MakeService(
             return e.toString()
         }
     }
+
+
 }
 data class MLRequest(val imagebase64: String)
