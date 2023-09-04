@@ -1,33 +1,38 @@
-//package com.boseyo.backend.controller
-//
-//import com.boseyo.backend.entity.Board
-//import com.boseyo.backend.repository.BoardRepository
-//import org.springframework.beans.factory.annotation.Autowired
-//import org.springframework.stereotype.Controller
-//import org.springframework.web.bind.annotation.*
-//
-//@RestController
-//@RequestMapping("/boards")
-//class BoardController @Autowired constructor(
-//    private val boardRepository: BoardRepository
-//) {
-//    @PostMapping("/write")
-//    fun creatBoard(@RequestBody board: Board):Board{
-//        return boardRepository.save(board)
-//    }
-//
-//    @GetMapping
-//    fun readBoard():List<Board>{
-//        return boardRepository.findAll();
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    fun deleteBoard(@PathVariable id: Int) {
-//        if (boardRepository.existsById(id)) {
-//            boardRepository.deleteById(id)
-//        } else {
-//            throw RuntimeException("Board not found")
-//        }
-//    }
-//
-//}
+package com.boseyo.backend.controller
+
+import com.boseyo.backend.dto.BoardDto
+import com.boseyo.backend.dto.MakeDto
+import com.boseyo.backend.service.BoardService
+import jakarta.persistence.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping("/api/board")
+class BoardController (@Autowired private val boardService: BoardService){
+    //게시글 작성
+    @PostMapping("/write")
+    fun writePost(@RequestBody boardDto: BoardDto, makeDto: MakeDto):Long?{
+        return boardService.savePost(boardDto, makeDto)
+    }
+
+    //작성 글 목록
+    @GetMapping
+    fun getPostList():List<BoardDto>{
+        return boardService.getBoardList()
+    }
+
+    //게시글 불러오기
+    @GetMapping("/{postId}")
+    fun getPostContent(@PathVariable postId:Long):BoardDto{
+        return boardService.getPost(postId)
+    }
+
+    //게시글 삭제
+    @DeleteMapping("/{postId}")
+    @ResponseBody
+    fun deletePost(@PathVariable postId:Long):Boolean{
+        return Result.runCatching { boardService.deletePost(postId) }.isSuccess
+    }
+
+}
