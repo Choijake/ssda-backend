@@ -56,7 +56,7 @@ class EmailService(@Autowired val redisService: RedisService, @Autowired val htm
 
     fun createToken(email: String):String {
         val emailToken = UUID.randomUUID().toString()
-        redisService.setDataExpire(email, emailToken, 10000L)
+        redisService.setDataExpire(email, emailToken, java.time.Duration.ofHours(24))
         return emailToken
     }
 
